@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "487081003654",
+    "firebase_url": "https://notenest-97445-default-rtdb.firebaseio.com",
+    "project_id": "notenest-97445",
+    "storage_bucket": "notenest-97445.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:487081003654:android:2415528b6410f1433e9f07",
+        "android_client_info": {
+          "package_name": "com.example.project"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBK3162yW1EzicBDIXTaYcwbBTlL3T28dk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

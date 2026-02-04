@@ -171,14 +171,14 @@ fun NoteNestLoginScreen() {
 
                 Button(
                     onClick = {
-                        if (email.isBlank() || password.isBlank()) {
-                            Toast.makeText(
-                                context,
-                                "Please fill all the fields",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                        // Trim both to remove accidental leading/trailing spaces or newlines
+                        val finalEmail = email.trim()
+                        val finalPassword = password.trim()
+
+                        if (finalEmail.isBlank() || finalPassword.isBlank()) {
+                            Toast.makeText(context, "Fields cannot be empty", Toast.LENGTH_SHORT).show()
                         } else {
-                            userViewModel.login(email, password) { success, message ->
+                            userViewModel.login(finalEmail, finalPassword) { success, message ->
                                 Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
                                 if (success) {
                                     val intent = Intent(context, DashboardActivity::class.java)

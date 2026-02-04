@@ -1,13 +1,12 @@
 package com.example.project.view
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -36,7 +35,9 @@ import com.example.project.R
 import com.example.project.model.UserModel
 import com.example.project.repository.UserRepoImplementation
 import com.example.project.viewmodel.UserViewModel
-import com.google.firebase.database.FirebaseDatabase
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class RegisterActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,11 +49,11 @@ class RegisterActivity : ComponentActivity() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NoteNestRegisterScreen() {
 
     val userViewModel: UserViewModel = remember { UserViewModel(UserRepoImplementation()) }
-
 
     var firstName by remember { mutableStateOf("") }
     var lastName by remember { mutableStateOf("") }
@@ -61,8 +62,37 @@ fun NoteNestRegisterScreen() {
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
 
+    // Date Picker State
+    val datePickerState = rememberDatePickerState()
+    var showDatePicker by remember { mutableStateOf(false) }
+
     val context = LocalContext.current
     val activity = context as Activity
+
+    if (showDatePicker) {
+        DatePickerDialog(
+            onDismissRequest = { showDatePicker = false },
+            confirmButton = {
+                TextButton(onClick = {
+                    val selectedDate = datePickerState.selectedDateMillis
+                    if (selectedDate != null) {
+                        val format = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                        dob = format.format(Date(selectedDate))
+                    }
+                    showDatePicker = false
+                }) {
+                    Text("OK")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDatePicker = false }) {
+                    Text("Cancel")
+                }
+            }
+        ) {
+            DatePicker(state = datePickerState)
+        }
+    }
 
     Scaffold { paddingValues ->
 
@@ -141,15 +171,21 @@ fun NoteNestRegisterScreen() {
                 // Date of Birth
                 TextField(
                     value = dob,
-                    onValueChange = { dob = it },
+                    onValueChange = { },
+                    readOnly = true,
                     placeholder = { Text("Date of Birth (DD/MM/YYYY)") },
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Number
-                    ),
+                    trailingIcon = {
+                        IconButton(onClick = { showDatePicker = true }) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.baseline_calendar_month_24),
+                                contentDescription = "Select Date"
+                            )
+                        }
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(Color.White.copy(alpha = 0.2f), RoundedCornerShape(12.dp))
+                        .clickable { showDatePicker = true }
                 )
 
                 Spacer(modifier = Modifier.height(12.dp))
@@ -203,38 +239,33 @@ fun NoteNestRegisterScreen() {
                 // Register Button
                 Button(
                     onClick = {
-                        if (
-                            firstName.isBlank() ||
-                            lastName.isBlank() ||
-                            dob.isBlank() ||
-                            email.isBlank() ||
-                            password.isBlank()
-                        ) {
+                        if (firstName.isBlank() || lastName.isBlank() || dob.isBlank() || email.isBlank() || password.isBlank()) {
                             Toast.makeText(context, "Please fill all the fields", Toast.LENGTH_SHORT).show()
                         } else {
-                            val dbRef = FirebaseDatabase.getInstance().getReference("User")
-                            val userId = dbRef.push().key!!
-
-                            val user = UserModel(
-                                userId = userId,
-                                firstName = firstName,
-                                lastName = lastName,
-                                dob = dob,
-                                email = email,
-                                password = password
-                            )
-
-                            // Save to Firebase
-                            userViewModel.addUserToDatabase(userId, user) { success, message ->
+                            userViewModel.register(email.trim(), password.trim()) { success, message, userId ->
                                 if (success) {
-                                    Toast.makeText(context, "Registration Successful", Toast.LENGTH_SHORT).show()
-                                    activity.finish() // go back to login
+                                    val user = UserModel(
+                                        userId = userId,
+                                        firstName = firstName,
+                                        lastName = lastName,
+                                        dob = dob,
+                                        email = email.trim(),
+                                        password = password.trim()
+                                    )
+
+                                    userViewModel.addUserToDatabase(userId, user) { dbSuccess, dbMessage ->
+                                        if (dbSuccess) {
+                                            Toast.makeText(context, "Registration Successful", Toast.LENGTH_SHORT).show()
+                                            activity.finish()
+                                        } else {
+                                            Toast.makeText(context, dbMessage, Toast.LENGTH_SHORT).show()
+                                        }
+                                    }
                                 } else {
-                                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(context, "Auth Failed: $message", Toast.LENGTH_SHORT).show()
                                 }
                             }
                         }
-
                     },
                     shape = RoundedCornerShape(12.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color.White),
@@ -269,7 +300,6 @@ fun NoteNestRegisterScreen() {
                         context.startActivity(intent)
                         activity.finish()
                     }
-
                 )
             }
         }

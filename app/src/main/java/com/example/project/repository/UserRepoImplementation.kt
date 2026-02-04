@@ -17,19 +17,20 @@ class UserRepoImplementation : UserRepo {
     val database: FirebaseDatabase = FirebaseDatabase.getInstance()
     val ref: DatabaseReference = database.getReference("Users")
 
-    override fun login(
-        email: String,
-        password: String,
-        callback: (Boolean, String) -> Unit
-    ) {
-        auth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
-            if (it.isSuccessful) {
-                callback(true, "Login success")
-            } else {
-                callback(false, it.exception?.message ?: "Login failed")
-
+    override fun login(email: String, password: String, callback: (Boolean, String) -> Unit) {
+        auth.signInWithEmailAndPassword(email, password)
+            .addOnSuccessListener {
+                callback(true, "Login Successful")
             }
-        }
+            .addOnFailureListener { exception ->
+
+                val errorMessage = when (exception) {
+                    is com.google.firebase.auth.FirebaseAuthInvalidUserException -> "No account found with this email."
+                    is com.google.firebase.auth.FirebaseAuthInvalidCredentialsException -> "Incorrect password."
+                    else -> exception.localizedMessage ?: "An unknown error occurred"
+                }
+                callback(false, errorMessage)
+            }
     }
 
     override fun forgetPassword(

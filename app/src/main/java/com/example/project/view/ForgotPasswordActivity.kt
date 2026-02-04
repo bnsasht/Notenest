@@ -24,6 +24,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.project.R
+import com.example.project.repository.UserRepoImplementation
+import com.example.project.viewmodel.UserViewModel
 
 class ForgotPasswordActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,6 +39,9 @@ class ForgotPasswordActivity : ComponentActivity() {
 
 @Composable
 fun NoteNestForgotPasswordScreen() {
+
+    val repository = UserRepoImplementation()
+    val userViewModel = UserViewModel(repository)
 
     var email by remember { mutableStateOf("") }
     val context = LocalContext.current
@@ -101,7 +106,7 @@ fun NoteNestForgotPasswordScreen() {
                 Spacer(modifier = Modifier.height(12.dp))
 
                 Text(
-                    text = "Enter your email to receive OTP",
+                    text = "Enter your email to receive reset link.",
                     style = TextStyle(
                         fontSize = 14.sp,
                         color = Color.White.copy(alpha = 0.85f)
@@ -130,21 +135,21 @@ fun NoteNestForgotPasswordScreen() {
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // Send OTP Button
+                // Send reset link Button
                 Button(
                     onClick = {
                         if (email.isBlank()) {
-                            Toast.makeText(
-                                context,
-                                "Please enter your email",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            Toast.makeText(context, "Please enter your email", Toast.LENGTH_SHORT).show()
                         } else {
-                            Toast.makeText(
-                                context,
-                                "OTP sent",
-                                Toast.LENGTH_SHORT
-                            ).show()
+
+                            userViewModel.forgotPassword(email.trim()) { success, message ->
+                                if (success) {
+                                    Toast.makeText(context, "Link sent! Check your gmail.", Toast.LENGTH_LONG).show()
+                                } else {
+
+                                    Toast.makeText(context, "Error: $message", Toast.LENGTH_LONG).show()
+                                }
+                            }
                         }
                     },
                     shape = RoundedCornerShape(12.dp),
@@ -152,7 +157,7 @@ fun NoteNestForgotPasswordScreen() {
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
-                        text = "Send OTP",
+                        text = "Send reset link",
                         color = Color(0xFF1E3A8A),
                         fontWeight = FontWeight.Bold
                     )

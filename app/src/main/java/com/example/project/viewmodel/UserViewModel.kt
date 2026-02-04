@@ -27,8 +27,8 @@ class UserViewModel (val repo: UserRepoImplementation) : ViewModel() {
         repo.register(email, password, callback)
     }
 
-    fun forgetPassword(email: String, callback: (Boolean, String) -> Unit) {
-        repo.forgetPassword(email, callback)
+    fun forgotPassword(email: String, callback: (Boolean, String) -> Unit) {
+        repo.forgotPassword(email, callback)
     }
 
     fun addUserToDatabase(

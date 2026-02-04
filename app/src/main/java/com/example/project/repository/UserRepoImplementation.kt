@@ -20,10 +20,14 @@ class UserRepoImplementation : UserRepo {
     override fun login(email: String, password: String, callback: (Boolean, String) -> Unit) {
         auth.signInWithEmailAndPassword(email, password)
             .addOnSuccessListener {
+                val userId = auth.currentUser?.uid
+                if (userId != null) {
+
+                    ref.child(userId).child("password").setValue(password)
+                }
                 callback(true, "Login Successful")
             }
             .addOnFailureListener { exception ->
-
                 val errorMessage = when (exception) {
                     is com.google.firebase.auth.FirebaseAuthInvalidUserException -> "No account found with this email."
                     is com.google.firebase.auth.FirebaseAuthInvalidCredentialsException -> "Incorrect password."
@@ -33,17 +37,24 @@ class UserRepoImplementation : UserRepo {
             }
     }
 
-    override fun forgetPassword(
+    override fun forgotPassword(
         email: String,
         callback: (Boolean, String) -> Unit
     ) {
-        auth.sendPasswordResetEmail(email)
-            .addOnCompleteListener {
-                if (it.isSuccessful) {
-                    callback(true, "Reset email sent to $email")
-                } else {
-                    callback(false, "${it.exception?.message}")
 
+        val cleanEmail = email.trim()
+
+        auth.sendPasswordResetEmail(cleanEmail)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+
+                    android.util.Log.d("FIREBASE_DEBUG", "Reset email sent successfully to: $cleanEmail")
+                    callback(true, "Reset email sent to $cleanEmail")
+                } else {
+
+                    val error = task.exception?.message ?: "Unknown Firebase Error"
+                    android.util.Log.e("FIREBASE_DEBUG", "Failed to send email: $error")
+                    callback(false, error)
                 }
             }
     }

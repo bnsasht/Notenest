@@ -15,7 +15,7 @@ interface UserRepo {
         callback: (Boolean, String) -> Unit
     )
 
-    fun forgetPassword(email:String,callback: (Boolean, String) -> Unit)
+    fun forgotPassword(email:String,callback: (Boolean, String) -> Unit)
 
     fun register(
         email: String, password: String,

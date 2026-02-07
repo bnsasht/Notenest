@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.example.project.R
 import com.example.project.ui.theme.Blue
 import com.example.project.ui.theme.White
@@ -40,125 +41,46 @@ class DashboardActivity : ComponentActivity() {
     }
 }
 
+data class NavItem(val label: String, val icon: Int)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DashboardBody(){
-
-    val context = LocalContext.current
-    val activity = context as Activity
-
-    data class NavItem(val label: String, val icon: Int)
-
+fun DashboardBody() {
     var selectedIndex by remember { mutableStateOf(0) }
+    val context = LocalContext.current
 
-    var listNav = listOf(
-        NavItem(
-            label = "Home",
-            icon = R.drawable.baseline_home_24,
-        ),
-        NavItem(
-            label = "Search",
-            icon = R.drawable.baseline_search_24,
-        ),
-        NavItem(
-            label = "Notification",
-            icon = R.drawable.baseline_notifications_none_24,
-        ),
-        NavItem(
-            label = "More",
-            icon = R.drawable.baseline_more_horiz_24,
-        ),
-    )
-
-    Scaffold (
-        topBar = {
-            TopAppBar(
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Blue,
-                    actionIconContentColor = White,
-                    titleContentColor = White,
-                    navigationIconContentColor = White
-                ),
-                title = {Text("Dashboard")},
-                navigationIcon = {
-                    IconButton(onClick = {
-                        activity.finish()
-                    }) {
-                        Icon(
-                            painter = painterResource(R.drawable.baseline_arrow_back_ios_new_24),
-                            contentDescription = null
-                        )
-                    }
-                },
-                actions = {
-
-                    IconButton(onClick = {
-
-                    }) {
-                        Icon(
-                            painter = painterResource(R.drawable.baseline_search_24),
-                            contentDescription = null
-                        )
-
-                    }
-                    IconButton(onClick = {
-
-                    }) {
-                        Icon(
-                            painter = painterResource(R.drawable.baseline_notifications_none_24),
-                            contentDescription = null
-                        )
-
-                    }
-                    IconButton(onClick = {
-
-                    }) {
-                        Icon(
-                            painter = painterResource(R.drawable.baseline_more_horiz_24),
-                            contentDescription = null
-                        )
-
-                    }
-                }
-            )
-        },
+    Scaffold(
         bottomBar = {
-            NavigationBar {
-                listNav.forEachIndexed { index, item ->
+            NavigationBar(
+                containerColor = androidx.compose.ui.graphics.Color(0xFF0A0F19),
+                contentColor = androidx.compose.ui.graphics.Color.White,
+                tonalElevation = 8.dp
+            ) {
+                val navItems = listOf(
+                    NavItem("Upload", R.drawable.baseline_cloud_upload_24),
+                    NavItem("View", R.drawable.baseline_visibility_24),
+                    NavItem("Search", R.drawable.baseline_search_24),
+                    NavItem("Favourites", R.drawable.baseline_favorite_24)
+                )
+                navItems.forEachIndexed { index, item ->
                     NavigationBarItem(
-                        icon = {
-                            Icon(
-                                painter = painterResource(item.icon),
-                                contentDescription = null
-                            )
-                        },
-                        label = {
-                            Text(item.label)
-                        },
-                        onClick = {
-                            selectedIndex = index
-                        },
-                        selected = selectedIndex == index
+                        selected = selectedIndex == index,
+                        onClick = { selectedIndex = index },
+                        icon = { Icon(painterResource(item.icon), contentDescription = null) },
+                        label = { Text(item.label) }
                     )
                 }
             }
         }
-    ){ padding ->
-        Box (
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-        ){
-            when(selectedIndex){
-                0-> HomeScreen()
-                1-> SearchScreen()
-                2-> NotificationScreen()
-                3-> MoreScreen()
-                else -> HomeScreen()
+    ) { padding ->
+        Box(modifier = Modifier.fillMaxSize().padding(padding)) {
+            when (selectedIndex) {
+                0 -> UploadScreen()
+                1 -> ViewNotesScreen()
+                2 -> SearchNotesScreen()
+                3 -> FavouritesScreen()
             }
         }
     }
-
 }
 
 

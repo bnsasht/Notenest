@@ -49,11 +49,11 @@ class UserViewModel (val repo: UserRepoImplementation) : ViewModel() {
 
     fun getUserById(userId: String, callback: (Boolean, UserModel?) -> Unit) {
         repo.getUserById(userId) { success, user ->
-            if (success) {
-                _users.postValue(user)
-            }
+            _users.postValue(user)
+            callback(success, user)
         }
     }
+
 
     fun getAllUser(callback: (Boolean, List<UserModel>?) -> Unit) {
         repo.getAllUser { success, data ->

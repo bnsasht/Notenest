@@ -92,13 +92,13 @@ class UserRepoImplementation : UserRepo {
         userId: String,
         callback: (Boolean, UserModel?) -> Unit
     ) {
-        ref.child(userId).addValueEventListener(object : ValueEventListener {
+        ref.child(userId).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
                     val user = snapshot.getValue(UserModel::class.java)
-                    if (user != null) {
-                        callback(true, user)
-                    }
+                    callback(true, user)
+                } else {
+                    callback(false, null)
                 }
             }
 
@@ -107,6 +107,8 @@ class UserRepoImplementation : UserRepo {
             }
         })
     }
+
+
 
     override fun getAllUser(callback: (Boolean, List<UserModel>?) -> Unit) {
         ref.addValueEventListener(object : ValueEventListener {

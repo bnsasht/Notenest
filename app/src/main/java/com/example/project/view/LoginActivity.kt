@@ -1,13 +1,12 @@
 package com.example.project.view
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -56,19 +55,14 @@ fun NoteNestLoginScreen() {
     val context = LocalContext.current
     val activity = context as? Activity
 
-
     Scaffold { paddingValues ->
-
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
                 .background(
                     Brush.verticalGradient(
-                        colors = listOf(
-                            Color(0xFFB3DFFF),
-                            Color(0xFF1E3A8A)
-                        )
+                        colors = listOf(Color(0xFFB3DFFF), Color(0xFF1E3A8A))
                     )
                 ),
             contentAlignment = Alignment.TopCenter
@@ -112,10 +106,7 @@ fun NoteNestLoginScreen() {
                     singleLine = true,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(
-                            Color.White.copy(alpha = 0.2f),
-                            shape = RoundedCornerShape(12.dp)
-                        )
+                        .background(Color.White.copy(alpha = 0.2f), shape = RoundedCornerShape(12.dp))
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -125,18 +116,13 @@ fun NoteNestLoginScreen() {
                     onValueChange = { password = it },
                     placeholder = { Text("Enter your password") },
                     singleLine = true,
-                    visualTransformation = if (passwordVisible)
-                        VisualTransformation.None
-                    else
-                        PasswordVisualTransformation(),
+                    visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                     trailingIcon = {
                         IconButton(onClick = { passwordVisible = !passwordVisible }) {
                             Icon(
                                 painter = painterResource(
-                                    if (passwordVisible)
-                                        R.drawable.baseline_visibility_off_24
-                                    else
-                                        R.drawable.baseline_visibility_24
+                                    if (passwordVisible) R.drawable.baseline_visibility_off_24
+                                    else R.drawable.baseline_visibility_24
                                 ),
                                 contentDescription = "Toggle Password"
                             )
@@ -144,10 +130,7 @@ fun NoteNestLoginScreen() {
                     },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(
-                            Color.White.copy(alpha = 0.2f),
-                            shape = RoundedCornerShape(12.dp)
-                        )
+                        .background(Color.White.copy(alpha = 0.2f), shape = RoundedCornerShape(12.dp))
                 )
 
                 Spacer(modifier = Modifier.height(10.dp))
@@ -158,26 +141,32 @@ fun NoteNestLoginScreen() {
                     modifier = Modifier
                         .align(Alignment.End)
                         .clickable {
-                            val intent = Intent(
-                                context,
-                                ForgotPasswordActivity::class.java
-                            )
+                            val intent = Intent(context, ForgotPasswordActivity::class.java)
                             context.startActivity(intent)
                         }
                 )
-
 
                 Spacer(modifier = Modifier.height(20.dp))
 
                 Button(
                     onClick = {
-                        // Trim both to remove accidental leading/trailing spaces or newlines
                         val finalEmail = email.trim()
                         val finalPassword = password.trim()
 
                         if (finalEmail.isBlank() || finalPassword.isBlank()) {
                             Toast.makeText(context, "Fields cannot be empty", Toast.LENGTH_SHORT).show()
                         } else {
+
+                            // fixed admin check
+                            if (finalEmail == "shivaa@gmail.com" && finalPassword == "shiva123") {
+                                Toast.makeText(context, "Admin login successful", Toast.LENGTH_SHORT).show()
+                                val intent = Intent(context, AdminDashboardActivity::class.java)
+                                context.startActivity(intent)
+                                activity?.finish()
+                                return@Button
+                            }
+
+                            // for regular users
                             userViewModel.login(finalEmail, finalPassword) { success, message ->
                                 Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
                                 if (success) {
@@ -199,26 +188,17 @@ fun NoteNestLoginScreen() {
                     )
                 }
 
-
                 Spacer(modifier = Modifier.height(20.dp))
 
                 Text(
                     buildAnnotatedString {
                         append("Don't have an account? ")
-                        withStyle(
-                            SpanStyle(
-                                color = Color.White,
-                                fontWeight = FontWeight.Bold
-                            )
-                        ) {
+                        withStyle(SpanStyle(color = Color.White, fontWeight = FontWeight.Bold)) {
                             append("Sign Up")
                         }
                     },
                     modifier = Modifier.clickable {
-                        val intent = Intent(
-                            context,
-                            RegisterActivity::class.java
-                        )
+                        val intent = Intent(context, RegisterActivity::class.java)
                         context.startActivity(intent)
                     }
                 )

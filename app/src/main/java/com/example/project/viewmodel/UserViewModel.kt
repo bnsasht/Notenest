@@ -4,10 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.project.model.UserModel
+import com.example.project.repository.UserRepo
 import com.example.project.repository.UserRepoImplementation
 import com.google.firebase.auth.FirebaseUser
 
-class UserViewModel(val repo: UserRepoImplementation) : ViewModel() {
+class UserViewModel(val repo: UserRepo) : ViewModel() {
 
     // authentication and user actions
 
@@ -30,6 +31,7 @@ class UserViewModel(val repo: UserRepoImplementation) : ViewModel() {
     fun getCurrentUser(): FirebaseUser? {
         return repo.getCurrentUser()
     }
+
 
     private val _users = MutableLiveData<UserModel?>()
     val users: LiveData<UserModel?> get() = _users
@@ -67,4 +69,9 @@ class UserViewModel(val repo: UserRepoImplementation) : ViewModel() {
             callback(success, message)
         }
     }
+
+    fun logout(callback: (Boolean, String) -> Unit) {
+        repo.logout(callback)
+    }
+
 }

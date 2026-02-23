@@ -151,9 +151,15 @@ class UserRepoImplementation : UserRepo {
         }
     }
 
-    fun logout() {
-        FirebaseAuth.getInstance().signOut()
+    override fun logout(callback: (Boolean, String) -> Unit) {
+        try {
+            FirebaseAuth.getInstance().signOut()
+            callback(true, "Logout successful")
+        } catch (e: Exception) {
+            callback(false, e.message ?: "Logout failed")
+        }
     }
+
 }
 
 

@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
@@ -107,6 +108,7 @@ fun NoteNestLoginScreen() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(Color.White.copy(alpha = 0.2f), shape = RoundedCornerShape(12.dp))
+                        .testTag("email")
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -131,6 +133,7 @@ fun NoteNestLoginScreen() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(Color.White.copy(alpha = 0.2f), shape = RoundedCornerShape(12.dp))
+                        .testTag("password")
                 )
 
                 Spacer(modifier = Modifier.height(10.dp))
@@ -182,6 +185,7 @@ fun NoteNestLoginScreen() {
                     shape = RoundedCornerShape(12.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color.White),
                     modifier = Modifier.fillMaxWidth()
+                        .testTag("button")
                 ) {
                     Text(
                         text = "Login",

@@ -158,12 +158,17 @@ fun SettingsScreen(userViewModel: UserViewModel) {
             // Logout button
             Button(
                 onClick = {
-                    userViewModel.repo.logout()
-                    val intent = Intent(context, LoginActivity::class.java).apply {
-                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    userViewModel.logout { success, _ ->
+
+                        if (success) {
+                            val intent = Intent(context, LoginActivity::class.java).apply {
+                                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                            }
+                            context.startActivity(intent)
+                            (context as? ComponentActivity)?.finish()
+                        }
+
                     }
-                    context.startActivity(intent)
-                    (context as? ComponentActivity)?.finish()
                 },
                 modifier = Modifier
                     .fillMaxWidth()

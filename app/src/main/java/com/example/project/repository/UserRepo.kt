@@ -36,8 +36,6 @@ interface UserRepo {
 
     fun updateProfile(userId: String, model: UserModel,
                       callback: (Boolean, String) -> Unit)
-
-
-
+    fun logout(callback: (Boolean, String) -> Unit)
 
 }

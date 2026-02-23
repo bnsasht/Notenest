@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -127,6 +128,7 @@ fun NoteNestForgotPasswordScreen() {
                     ),
                     modifier = Modifier
                         .fillMaxWidth()
+                        .testTag("forgotEmailField")
                         .background(
                             Color.White.copy(alpha = 0.2f),
                             RoundedCornerShape(12.dp)
@@ -155,6 +157,7 @@ fun NoteNestForgotPasswordScreen() {
                     shape = RoundedCornerShape(12.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color.White),
                     modifier = Modifier.fillMaxWidth()
+                        .testTag("resetButton")
                 ) {
                     Text(
                         text = "Send reset link",

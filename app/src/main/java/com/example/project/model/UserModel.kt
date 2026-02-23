@@ -6,7 +6,7 @@ data class UserModel(
     val firstName: String="",
     val lastName: String="",
     val dob: String="",
-    val password: String=""
+    val admin: Boolean = false
 ){
     fun toMap() : Map<String, Any?>{
         return mapOf(
@@ -15,7 +15,7 @@ data class UserModel(
             "firstName" to firstName,
             "lastName" to lastName,
             "dob" to dob,
-            "password" to password,
+            "isAdmin" to admin,
         )
     }
 }

@@ -127,7 +127,6 @@ fun SettingsScreen(userViewModel: UserViewModel) {
                                 firstName = firstName,
                                 lastName = lastName,
                                 dob = user?.dob ?: "",
-                                password = user?.password ?: ""
                             )
                             userViewModel.updateProfile(currentUserId, updatedUser) { _, _ -> }
                         }

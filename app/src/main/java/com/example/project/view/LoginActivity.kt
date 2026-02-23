@@ -157,22 +157,24 @@ fun NoteNestLoginScreen() {
                             Toast.makeText(context, "Fields cannot be empty", Toast.LENGTH_SHORT).show()
                         } else {
 
-                            // fixed admin check
-                            if (finalEmail == "shivaa@gmail.com" && finalPassword == "shiva123") {
-                                Toast.makeText(context, "Admin login successful", Toast.LENGTH_SHORT).show()
-                                val intent = Intent(context, AdminDashboardActivity::class.java)
-                                context.startActivity(intent)
-                                activity?.finish()
-                                return@Button
-                            }
-
-                            // for regular users
                             userViewModel.login(finalEmail, finalPassword) { success, message ->
-                                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
                                 if (success) {
-                                    val intent = Intent(context, DashboardActivity::class.java)
-                                    context.startActivity(intent)
-                                    activity?.finish()
+                                    val uid = userViewModel.getCurrentUser()?.uid
+                                    if (uid != null) {
+                                        // check database for admin
+                                        userViewModel.getUserById(uid) { dbSuccess, userModel ->
+                                            if (dbSuccess && userModel?.admin == true) {
+                                                Toast.makeText(context, "Admin login successful", Toast.LENGTH_SHORT).show()
+                                                context.startActivity(Intent(context, AdminDashboardActivity::class.java))
+                                            } else {
+                                                Toast.makeText(context, "Login successful", Toast.LENGTH_SHORT).show()
+                                                context.startActivity(Intent(context, DashboardActivity::class.java))
+                                            }
+                                            activity?.finish()
+                                        }
+                                    }
+                                } else {
+                                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
                                 }
                             }
                         }

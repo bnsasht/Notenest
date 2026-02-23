@@ -242,6 +242,7 @@ fun NoteNestRegisterScreen() {
                         if (firstName.isBlank() || lastName.isBlank() || dob.isBlank() || email.isBlank() || password.isBlank()) {
                             Toast.makeText(context, "Please fill all the fields", Toast.LENGTH_SHORT).show()
                         } else {
+                            // authenticate with firebase auth
                             userViewModel.register(email.trim(), password.trim()) { success, message, userId ->
                                 if (success) {
                                     val user = UserModel(
@@ -250,9 +251,10 @@ fun NoteNestRegisterScreen() {
                                         lastName = lastName,
                                         dob = dob,
                                         email = email.trim(),
-                                        password = password.trim()
+                                        admin = false // default to false
                                     )
 
+                                    // save into database
                                     userViewModel.addUserToDatabase(userId, user) { dbSuccess, dbMessage ->
                                         if (dbSuccess) {
                                             Toast.makeText(context, "Registration Successful", Toast.LENGTH_SHORT).show()

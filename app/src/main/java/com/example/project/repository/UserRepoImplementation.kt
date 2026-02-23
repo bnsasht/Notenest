@@ -1,6 +1,5 @@
 package com.example.project.repository
 
-import androidx.compose.animation.core.snap
 import com.example.project.model.UserModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -20,20 +19,10 @@ class UserRepoImplementation : UserRepo {
     override fun login(email: String, password: String, callback: (Boolean, String) -> Unit) {
         auth.signInWithEmailAndPassword(email, password)
             .addOnSuccessListener {
-                val userId = auth.currentUser?.uid
-                if (userId != null) {
-
-                    ref.child(userId).child("password").setValue(password)
-                }
                 callback(true, "Login Successful")
             }
             .addOnFailureListener { exception ->
-                val errorMessage = when (exception) {
-                    is com.google.firebase.auth.FirebaseAuthInvalidUserException -> "No account found with this email."
-                    is com.google.firebase.auth.FirebaseAuthInvalidCredentialsException -> "Incorrect password."
-                    else -> exception.localizedMessage ?: "An unknown error occurred"
-                }
-                callback(false, errorMessage)
+                callback(false, exception.localizedMessage ?: "Login failed")
             }
     }
 
@@ -160,6 +149,10 @@ class UserRepoImplementation : UserRepo {
                 callback(false, "${it.exception?.message}")
             }
         }
+    }
+
+    fun logout() {
+        FirebaseAuth.getInstance().signOut()
     }
 }
 
